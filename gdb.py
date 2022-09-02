@@ -1,8 +1,9 @@
 import binaryninja
 import gdb,sys
 
+# Set false for gdb, true for lsp
 if '':
-    sys.path.append("/home/ex/coding/phalanx/")
+    sys.path.append("/home/ex/coding/shogun/")
     from gef import GenericCommand, register, only_if_gdb_running, gef 
 
 # bv = binaryninja.open_view("a.bndb", options={'analysis.limits.maxFunctionSize':0})
