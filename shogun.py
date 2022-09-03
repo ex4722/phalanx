@@ -4,7 +4,9 @@ import gdb,sys
 # Set false for gdb, true for lsp
 if '':
     sys.path.append("/home/ex/coding/shogun/")
-    from gef import GenericCommand, register, only_if_gdb_running, gef,u8,u16,u32,u64
+    # from gef import GenericCommand, register, only_if_gdb_running, gef,u8,u16,u32,u64, gef_print
+    from gef import * 
+
 
 # bv = binaryninja.open_view("a.bndb", options={'analysis.limits.maxFunctionSize':0})
 bv = binaryninja.open_view("new.bndb")
@@ -26,7 +28,6 @@ class StackVarible():
 
     def __str__(self):
         return f"{hex(self.address)}\t{self.name}->{self.value} [*]{self.changed}"
-
 
 
 
@@ -74,10 +75,10 @@ class GetStackVars(GenericCommand):
                     val = u32(gef.memory.read(var_addr, 4))
                 case 8:
                     val = u64(gef.memory.read(var_addr, 8))
+
                 case _:
                     gef_print(f"TYPE UNKNOWN for {v.name}: {v.type.name}")
                     val = 0xffffffffffffffff 
-
 
 
             # gef_print(hex(unpack(gef.memory.read(var_addr,v.type.width),'all')))
@@ -141,10 +142,10 @@ class GetStackVars(GenericCommand):
             gdb.set_convenience_variable(stk_var.name, None)
 
     def display_pane(self):                    
-        self.do_invoke(self)
+        # FAKE ARGV LOL
+        self.do_invoke([''])
 
     def title(self):
         return "Stack Varibles"
-
 
 register_external_context_pane("Stack Varibles", lambda : gdb.execute("gsv"), lambda : "Stack Varible")
