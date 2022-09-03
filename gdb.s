@@ -1,5 +1,6 @@
-source gdb.py
+#gef config gef.debug 1
+source shogun.py
 pi gef.gdb.load()
-b foobar
+b main 
+# b *0x5555555551e9
 run
-gsv
