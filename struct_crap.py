@@ -18,10 +18,48 @@ dyn = bv.types["Elf64_Dyn"]
 s = bv.types["struct_2"]
 
 
-func_list = []
+def member_at_offset(structure : binaryninja.types.StructureType , offset: int):
+    """ 
+    member_at_offset(structure : binaryninja.types.StructureType , offset: int):
+    
+    Returns none instead of erroring when nothing found
+    """
+    try:
+        return structure.member_at_offset(offset)
+    except ValueError:
+        return None
 
-def resolve_dependencies( typed ):
-    global func_list
+
+def patch_struct( structure : binaryninja.types.StructureType) -> binaryninja.types.StructureType:
+    """
+    patch_struct( structure : binaryninja.types.StructureType) -> binaryninja.types.StructureType:
+
+    Returns a copy of structure that is padded with char[] for all non defined structures
+    :param StructureType structure:
+    """
+    structure = structure.mutable_copy()
+    i = 0
+    times_padded = 1
+
+    while i < structure.width:
+        member = member_at_offset(structure, i)
+        # Not defined, find how long undef chain is
+        if member == None:
+            null_c = 0
+            while member_at_offset(structure,null_c + i) == None and (null_c + i ) < structure.width:
+                null_c += 1
+            structure.add_member_at_offset(f'BN_PADDING_{times_padded}', binaryninja.types.ArrayBuilder.create(binaryninja.types.CharType.create(), null_c ), i)
+            i += null_c
+            times_padded += 1
+
+        else:
+            i += member.type.width
+    return structure.immutable_copy()
+
+
+# bv = binaryninja.open_view("./chall")
+# bv = binaryninja.open_view("chall.bndb")
+a = 0
 
     match typed.type_class:
         case binaryninja.TypeClass.TypeReferenceClass:
