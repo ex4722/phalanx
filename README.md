@@ -1,4 +1,7 @@
 <h1>Shogun</h1>
+GDB Plugin to add structs + Binja il into gdb
+  - Uses IL as source so varibles should be accessable 
+
 
 <h2>TODO:</h2>
 - Struct support
